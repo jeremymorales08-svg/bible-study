@@ -606,7 +606,7 @@ function renderContext(book, focusVerse) {
   const ul = document.createElement("ul");
   ul.className = "key-list";
   for (const [ref, note] of info.key) {
-    const parts = kvRefParts(ref.replace(/–.*/, ""));
+    const parts = kvRefParts(ref.replace(/[-–].*/, ""));
     const li = document.createElement("li");
     const a = document.createElement("button");
     a.className = "key-ref";
@@ -789,7 +789,7 @@ function bookFactBlocks(book, intent) {
      <p class="muted small">${openBtn(book.slug, 1)}</p>`);
   if (intent.keyverses) out += block(label(L.keyverses), "study",
     `<ul class="key-list">${info.key.map(([r, n]) => {
-      const p = kvRefParts(r.replace(/–.*/, ""));
+      const p = kvRefParts(r.replace(/[-–].*/, ""));
       return `<li><button class="key-ref" data-slug="${esc(book.slug)}" data-ch="${p ? p.c : 1}"${p ? ` data-v="${p.v}"` : ""}>${esc(nm)} ${esc(r)}</button><span class="key-note"> — ${esc(n)}</span></li>`;
     }).join("")}</ul>`);
   if (intent.count) out += block(label(L.count), "study",
@@ -948,7 +948,7 @@ async function loadDailyVerse() {
     if (usesPool()) {
       // sources without a random endpoint: draw from the study dataset's key verses (still fetched live)
       const book = BOOKS[Math.floor(Math.random() * BOOKS.length)];
-      const kref = bookInfo(book).key[Math.floor(Math.random() * bookInfo(book).key.length)][0].replace(/–.*/, "");
+      const kref = bookInfo(book).key[Math.floor(Math.random() * bookInfo(book).key.length)][0].replace(/[-–].*/, "");
       const parts = kvRefParts(kref);
       const data = await fetchVerses(`${book.slug}+${parts.c}:${parts.v}`);
       const v = data.verses[0];
