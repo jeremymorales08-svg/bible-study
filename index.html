@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lamp &amp; Light — Bible Study / Estudio Bíblico</title>
+<meta name="description" content="A Bible study companion: Scripture in its historical context, with book backgrounds, a biblical timeline and an honest study assistant. / Un compañero de estudio bíblico: la Escritura en su contexto histórico." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/style.css" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%238a6420'/><text x='50' y='70' font-size='58' text-anchor='middle' fill='%23fff8e7' font-family='Georgia,serif'>L</text></svg>" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="#fff8e7"><path d="M12 2c1.1 3.2-1.1 4.6-2.6 6.1C7.9 9.6 7 11.2 7 13a5 5 0 0 0 10 0c0-1.8-.9-3.3-1.9-4.6C13.6 6.7 12.9 5.2 12 2z"/><ellipse cx="12" cy="19.6" rx="6.4" ry="2.2" opacity=".85"/></svg>
+    </span>
+    <div class="brand-text">
+      <h1>Lamp &amp; Light</h1>
+      <p class="brand-verse" data-i18n="brand_verse">Thy word is a lamp unto my feet, and a light unto my path. &mdash; Psalm 119:105</p>
+    </div>
+  </div>
+
+  <div class="topbar-controls">
+    <div class="refbox">
+      <input id="refInput" type="text" data-i18n-ph="ref_ph" placeholder="Go to: John 3:16, Genesis 1, Psalms 23…"
+             autocomplete="off" spellcheck="false" aria-label="Bible reference" />
+      <div id="refSuggest" class="ref-suggest" hidden></div>
+    </div>
+    <select id="translationSel" aria-label="Bible translation" title="Bible translation / Versión bíblica"></select>
+    <div class="amp-wrap">
+      <button id="ampBtn" class="icon-btn amp-btn" data-i18n="amp_btn" title="Amplified Bible (AMP) and Spanish versions">AMP &amp; Español</button>
+      <div id="ampPanel" class="amp-panel" hidden>
+        <h4 data-i18n="amp_title">Amplified Bible (AMP) and Spanish versions</h4>
+        <p data-i18n="amp_p">The <strong>Amplified Bible</strong> and modern Spanish versions (RVR1960, NVI…) are copyrighted, so they load through <a href="https://scripture.api.bible/" target="_blank" rel="noopener">API.bible</a> with a <strong>free</strong> API key. Spanish without a key is already available: <strong>Reina-Valera 1909</strong>, in the translation dropdown.</p>
+        <ol>
+          <li data-i18n="amp_li1">Create a free key at scripture.api.bible</li>
+          <li data-i18n="amp_li2">Paste it below and press <em>Enable</em></li>
+        </ol>
+        <input id="ampKey" type="password" data-i18n-ph="amp_key_ph" placeholder="Paste API key…" autocomplete="off" spellcheck="false" />
+        <div class="amp-actions">
+          <button id="ampSave" class="cta" data-i18n="amp_enable">Enable</button>
+          <button id="ampRemove" class="cta ghost" data-i18n="amp_remove" hidden>Remove</button>
+        </div>
+        <p id="ampStatus" class="amp-status"></p>
+        <p class="muted small" data-i18n="amp_small">The key stays in your browser only. The app verifies it and adds every AMP and Spanish edition your key can access.</p>
+      </div>
+    </div>
+    <button id="langBtn" class="icon-btn lang-btn" title="Cambiar a español">ES</button>
+    <button id="themeBtn" class="icon-btn" title="Toggle light / dark" aria-label="Toggle light / dark">&#9790;</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- ============ LEFT: BOOKS ============ -->
+  <aside class="sidebar" aria-label="Books of the Bible">
+    <input id="bookFilter" type="search" data-i18n-ph="bookfilter_ph" placeholder="Filter books…" aria-label="Filter books" />
+    <div class="testament-label" data-i18n="ot">Old Testament</div>
+    <div id="otList" class="book-list"></div>
+    <div class="testament-label" data-i18n="nt">New Testament</div>
+    <div id="ntList" class="book-list"></div>
+  </aside>
+
+  <!-- ============ CENTER: READING ============ -->
+  <main class="reader" id="reader">
+    <div id="chapterView" hidden>
+      <div class="chapter-head">
+        <button id="prevCh" class="nav-btn" title="Previous chapter" data-i18n="prev">&#8249; Prev</button>
+        <div class="chapter-title-wrap">
+          <h2 id="chapterTitle"></h2>
+          <p id="chapterSub" class="chapter-sub"></p>
+        </div>
+        <button id="nextCh" class="nav-btn" title="Next chapter" data-i18n="next">Next &#8250;</button>
+      </div>
+      <div id="eraStrip" class="era-strip"></div>
+      <article id="verses" class="verses" aria-live="polite"></article>
+      <footer class="translation-credit" id="translationCredit"></footer>
+    </div>
+
+    <div id="welcomeView">
+      <section class="hero-card">
+        <h2 data-i18n="hero_title">Read the Bible with its history at your side</h2>
+        <p data-i18n="hero_text">Every book of Scripture was written by real people, in a real place, at a real time. Lamp &amp; Light shows you the text of the Bible next to the setting it was written in — who wrote it, when, why, and what was happening in the world around it.</p>
+        <div class="hero-actions">
+          <button class="cta" data-goto="genesis/1" data-i18n="btn_genesis">Start at Genesis 1</button>
+          <button class="cta ghost" data-goto="mark/1" data-i18n="btn_mark">Start with Mark</button>
+          <button class="cta ghost" data-goto="psalms/1" data-i18n="btn_psalms">Read Psalms</button>
+        </div>
+      </section>
+
+      <section class="daily-card">
+        <h3 data-i18n="daily_title">Verse of the moment</h3>
+        <blockquote id="dailyVerse">Loading…</blockquote>
+        <p id="dailyRef" class="daily-ref"></p>
+      </section>
+
+      <section class="how-card">
+        <h3 data-i18n="how_title">How this site handles the text</h3>
+        <ul>
+          <li data-i18n="how_li1"><strong>Scripture is never paraphrased.</strong> Verses load word-for-word from the translation you pick above, and the translation is always credited.</li>
+          <li data-i18n="how_li2"><strong>Commentary is labelled commentary.</strong> Historical notes, dates and themes are study helps — clearly separated from the Bible text itself.</li>
+          <li data-i18n="how_li3"><strong>Honest about debate.</strong> Where scholars disagree (dates, authorship), both views are shown instead of pretending certainty.</li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ RIGHT: STUDY PANEL ============ -->
+  <aside class="study" aria-label="Study panel">
+    <div class="study-tabs" role="tablist">
+      <button class="study-tab active" data-tab="context" role="tab" data-i18n="tab_context">Context</button>
+      <button class="study-tab" data-tab="timeline" role="tab" data-i18n="tab_timeline">Timeline</button>
+      <button class="study-tab" data-tab="ask" role="tab" data-i18n="tab_ask">Ask</button>
+    </div>
+
+    <div id="tab-context" class="study-pane active">
+      <div id="contextEmpty" class="pane-empty" data-i18n="ctx_empty">Open a chapter to see its historical background.</div>
+      <div id="contextContent"></div>
+    </div>
+
+    <div id="tab-timeline" class="study-pane">
+      <div id="timelineContent"></div>
+    </div>
+
+    <div id="tab-ask" class="study-pane">
+      <div id="chatLog" class="chat-log"></div>
+      <div class="chat-sugs" id="chatSugs"></div>
+      <form id="chatForm" class="chat-form">
+        <input id="chatInput" type="text" data-i18n-ph="chat_ph" placeholder="Ask about a book, event or topic…"
+               autocomplete="off" aria-label="Ask the study assistant" />
+        <button type="submit" data-i18n-title="chat_send" title="Ask" aria-label="Ask">&#10148;</button>
+      </form>
+      <p class="chat-note" data-i18n="chat_note">The assistant only answers from the Bible text and the built-in study notes — it never invents verses or facts.</p>
+    </div>
+  </aside>
+
+</div>
+
+<footer class="site-foot">
+  <p data-i18n="footer">Scripture quotations are loaded unaltered from the selected translation. Historical notes reflect mainstream scholarly and traditional views; disputed points are marked as such. Lamp &amp; Light is a study aid, not a substitute for the Scriptures themselves.</p>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/data.es.js"></script>
+<script src="assets/i18n.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
